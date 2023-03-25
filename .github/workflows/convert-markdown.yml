@@ -21,8 +21,8 @@ jobs:
           done
       - name: Commit and push changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "kakeru.hashimoto@lny.muratec.co.jp"
+          git config --local user.name "KakeruHashimoto"
           git add .
           git commit -m "Convert Markdown to HTML"
           git push
