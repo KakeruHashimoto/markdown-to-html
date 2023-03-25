@@ -1,15 +1,28 @@
 name: Convert Markdown to HTML
+
 on:
   push:
     branches:
-      - main
+      - '*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y pandoc
       - name: Convert Markdown to HTML
-        uses: github-clemens/markdown-to-html-action@v2.0.0
-        with:
-          source: README.md
+        run: |
+          for file in *.md
+          do
+            pandoc --from markdown --to html --output "${file%.*}.html" "$file"
+          done
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Convert Markdown to HTML"
+          git push
