@@ -1,0 +1,15 @@
+name: Convert Markdown to HTML
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Convert Markdown to HTML
+        uses: github-clemens/markdown-to-html-action@v2.0.0
+        with:
+          source: README.md
