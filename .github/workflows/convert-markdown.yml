@@ -23,5 +23,5 @@ jobs:
         message: 'Convert Markdown to HTML'
         author_name: ${{ github.actor }}
         author_email: ${{ github.actor }}@users.noreply.github.com
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
