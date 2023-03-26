@@ -1,27 +1,46 @@
-name: Convert Markdown to HTML
+# This is a basic workflow to help you get started with Actions
 
+name: CI
+
+# Controls when the action will run. 
 on:
+  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    paths:
-    - '**.md'
+    branches: [ master ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  # asciidoc to html
+  asciidoctor_job:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    name: Build AsciiDoctor
     steps:
-    - uses: actions/checkout@v2
-    - name: Convert Markdown to HTML
-      uses: jakejarvis/markdown-to-html-action@master
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Markdown To Asciidoc
+      uses: docker://pandoc/core:2.9
       with:
-        extension: html
-        args: --stylesheet=style.css
-    - name: Commit HTML files
-      uses: EndBug/add-and-commit@v7
+        args: sample.md --to asciidoctor -o sample.adoc
+    # Output command using asciidoctor-action
+    - name: Build AsciiDoc step
+      id: documents
+      uses: Analog-inc/asciidoctor-action@master
       with:
-        add: '*.html'
-        message: 'Convert Markdown to HTML'
-        author_name: ${{ github.actor }}
-        author_email: ${{ github.actor }}@users.noreply.github.com
-      env:
-        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        shellcommand: "asciidoctor sample.adoc -r asciidoctor-diagram -a allow-uri-read -a data-uri -a toc=left" 
+    # Use the output from the documents step
+    - name: move deploy files
+      run: |
+        mkdir build/
+        mv sample* build/
+        ls build
+    - name: deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.ACCESS_TOKEN }}
+        publish_dir: ./build
+        publish_branch: gh-pages
