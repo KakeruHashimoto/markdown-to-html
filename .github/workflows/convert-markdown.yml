@@ -10,12 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Convert Markdown to HTML
-      uses: jakejarvis/markdown-to-html-action@master
+    - uses: ZacJW/markdown-html-action@1.1.0
       with:
-        extension: html
-        args: --stylesheet=style.css
+        input_files: '[["wildcard*.md"], ["dir1/*.md", "dir2/*.md]]'
+        output_files: '["out1.html", "out2.html"]'
+        builtin_stylesheet: 'style.css'
+        packages: 'pymdown-extensions'
+        extensions: '["pymdownx.extra"]'
     - name: Commit HTML files
       uses: EndBug/add-and-commit@v7
       with:
