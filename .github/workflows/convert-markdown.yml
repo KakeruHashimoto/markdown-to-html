@@ -1,28 +1,32 @@
-name: Convert Markdown to HTML
+# .github/workflows/convert-to-pdf.yml
 
+name: Docs to PDF
+# This workflow is triggered on pushes to the repository.
 on:
   push:
+    branches:
+      - main
+    # Paths can be used to only trigger actions when you have edited certain files, such as a file within the /docs directory
     paths:
-    - '**.md'
+      - 'docs/**.md'
+      - 'docs/images/**'
 
 jobs:
-  build:
+  converttopdf:
+    name: Build PDF
     runs-on: ubuntu-latest
-
     steps:
-    - uses: ZacJW/markdown-html-action@1.1.0
-      with:
-        input_files: '[["wildcard*.md"], ["dir1/*.md", "dir2/*.md]]'
-        output_files: '["out1.html", "out2.html"]'
-        builtin_stylesheet: 'style.css'
-        packages: 'pymdown-extensions'
-        extensions: '["pymdownx.extra"]'
-    - name: Commit HTML files
-      uses: EndBug/add-and-commit@v7
-      with:
-        add: '*.html'
-        message: 'Convert Markdown to HTML'
-        author_name: ${{ github.actor }}
-        author_email: ${{ github.actor }}@users.noreply.github.com
-      env:
-        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      - uses: actions/checkout@v2
+      - uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_dir: docs
+          output_dir: pdfs
+          images_dir: docs/images
+          # for example <img src="./images/file-name.png">
+          image_import: ./images
+          # Default is true, can set to false to only get PDF files
+          build_html: false
+      - uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: pdfs
