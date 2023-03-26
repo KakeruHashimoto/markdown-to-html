@@ -30,3 +30,8 @@ jobs:
         with:
           name: docs
           path: pdfs
+      - uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: pdfs
+
